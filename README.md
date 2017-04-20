@@ -1,6 +1,6 @@
-# Portal de tickets
+# Portal de Autofacturación
 
-> Ejemplo del funcionamiento de un portal de tickets en Facturame
+> Ejemplo del funcionamiento de un portal de autofacturación en **factúrame**
 
 ## Índice
 
@@ -17,7 +17,7 @@ Para completar con éxito la provisión de la cuenta son requeridos los siguient
 - RFC
 - ID y Token de su proveedor de facturación
 - Número de certificado
-- Nombre de plantilla
+- Nombre de plantilla para generar PDF
 
 Para usuarios de los siguientes proveedores, los datos pueden ser solicitados automáticamente por Factúrame:
 
@@ -30,25 +30,24 @@ Para la emisión de comprobantes fiscales es necesario que el emisor envíe la i
 
 La remisión incluye información propia de la emisión, como Emisor, Conceptos, Fecha de Emisión, etc. Se recomienda su uso para evitar la complejidad de construir, validar y firmar un CFDI directamente.
 
-Factúrame, a través de los servicios de un proveedor de facturación, se encargará de generar el CFDI con el sello correspondiente y la certificación del timbre.
+**Factúrame**, a través de los servicios de un proveedor de facturación, se encargará de generar el CFDI con el sello correspondiente y la certificación del timbre.
 
-El siguiente es un ejemplo de remisión para emisión de CFDI de tipo ingreso en el que se destaca la ausencia de información sobre el Receptor.
+El siguiente es un ejemplo de remisión para emisión de CFDI de tipo ingreso en el que se destaca la ausencia de información sobre el Receptor, esta información será completada una vez que el consumidor decida solicitar la factura a partir de la información del ticket.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <Remision xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="5.2">
   <InfoBasica rfcEmisor="AAA010101AAA" serie="FA" folio="12345">
    </InfoBasica>
-  <InfoAdicional formaDePago="Pago en una sola exhibicion" total="15959.28" subTotal="13758.20" metodoDePago="Tarjeta de Crédito" numCtaPago="1234" tipoDeComprobante="ingreso" lugarExpedicion="123 Cacao Street , Santa Fe, Distrito Federal"/>
-  <Emisor nombre="Apple Operations Cacao S.A. DE C.V.">
+  <InfoAdicional formaDePago="Pago en una sola exhibicion" total="15959.28" subTotal="13758.20" metodoDePago="02" numCtaPago="1234" tipoDeComprobante="ingreso" lugarExpedicion="123 Cacao Street , Santa Fe, Distrito Federal"/>
+  <Emisor nombre="Emisor Demo">
     <RegimenFiscal Regimen="Regimen General de Ley Personas Morales"/>
   </Emisor>
   <DomicilioFiscal codigoPostal="01210" pais="Mexico" estado="Distrito Federal" municipio="Alvaro Obregón" calle="Prolongación Paseo de la Reforma" noExterior="No. 600" noInterior="Piso 1 local 132"/>
   <Conceptos>
-    <Concepto importe="11759.20" valorUnitario="11759.20" descripcion="iPhone 6 Plus 16GB" noIdentificacion="MC603LZ/A" unidad="Pieza" cantidad="1.000">
-      <InformacionAduanera aduana="Aeropuerto Internacional de la Cd de Mexico" fecha="2015-07-10" numero="3749-5065787"/>
+    <Concepto importe="1000.00" valorUnitario="11759.20" descripcion="iPhone 8 Plus" noIdentificacion="12345657" unidad="Pieza" cantidad="1.000">
     </Concepto>
-    <Concepto importe="1999.00" valorUnitario="1999.00" descripcion="APPLECARE+ para iPhone 6s y iPhone 6s Plus" noIdentificacion="S5106LZ/A" unidad="Servicio" cantidad="1.000">
+    <Concepto importe="2999.00" valorUnitario="1999.00" descripcion="Mantenimiento" noIdentificacion="7654321" unidad="Servicio" cantidad="1.000">
        </Concepto>
   </Conceptos>
   <Impuestos totalImpuestosTrasladados="2201.31">
@@ -56,14 +55,6 @@ El siguiente es un ejemplo de remisión para emisión de CFDI de tipo ingreso en
       <Traslado importe="2201.31" tasa="16.00" impuesto="IVA"/>
     </Traslados>
   </Impuestos>
-  <Addenda>
-    <bfa2:AddendaBuzonFiscal xmlns:bfa2="http://www.buzonfiscal.com/ns/addenda/bf/2" version="2.0">
-      <bfa2:CFD refID="6936312043" totalConLetra=""/>
-      <bfa2:Receptor email="hpradhan@apple.com"/>
-      <bfa2:Extra valor="DLXH1168DVGH" atributo="MC603LZ/A"/>
-      <bfa2:TipoDocumento descripcion="Factura" nombreCorto="FAC"/>
-    </bfa2:AddendaBuzonFiscal>
-  </Addenda>
 </Remision>
 
 ```
@@ -76,7 +67,7 @@ El siguiente es un ejemplo de remisión para emisión de CFDI de tipo ingreso en
 
 ## [Alta de una remisión](id:alta_remision)
 
-Una vez construida la remisión, y luego de haber recibido un **web token** por parte del staff de Factúrame, el alta de la remisión se realiza enviando una petición HTTP con la remisión codificada en Base64 y algunos datos adicionales.
+Una vez construida la remisión, y luego de haber recibido un **web token** por parte del equio de **factúrame**, el alta de la remisión se realiza enviando una petición HTTPS con la remisión codificada en Base64 y algunos datos adicionales.
 
 A continuación se describen los parámetros requeridos en la petición.
 
@@ -97,7 +88,6 @@ A continuación encontrarás ejemplos básicos de cómo realizar una petición d
 - [Java](examples/java/main.java)
 - [Javascript](examples/javascript/main.js)
 - [Node.js](examples/node/main.js)
-- [Javascript](examples/javascript/main.js)
 - [PHP](examples/php/main.php)
 - [Python](examples/python/main.py)
 - [Ruby](examples/ruby/main.rb)
