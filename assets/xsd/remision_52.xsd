@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xs:element name="InfoEspecial">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="atributo"/>
+          <xs:attribute type="xs:string" name="valor"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RegimenFiscal">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="Regimen"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="InformacionAduanera">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="aduana"/>
+          <xs:attribute type="xs:date" name="fecha"/>
+          <xs:attribute type="xs:string" name="numero"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Concepto">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="InformacionAduanera" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute type="xs:float" name="importe" use="required"/>
+      <xs:attribute type="xs:float" name="valorUnitario" use="required"/>
+      <xs:attribute type="xs:string" name="descripcion" use="required"/>
+      <xs:attribute type="xs:string" name="noIdentificacion" use="optional"/>
+      <xs:attribute type="xs:string" name="unidad" use="required"/>
+      <xs:attribute type="xs:float" name="cantidad" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Traslado">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:float" name="importe"/>
+          <xs:attribute type="xs:float" name="tasa"/>
+          <xs:attribute type="xs:string" name="impuesto"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Traslados">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Traslado"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="InfoBasica">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="InfoEspecial" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="rfcEmisor" use="required"/>
+      <xs:attribute type="xs:string" name="serie"/>
+      <xs:attribute type="xs:long" name="refID"/>
+      <xs:attribute type="xs:short" name="folio"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="InfoAdicional">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="formaDePago" use="required"/>
+          <xs:attribute type="xs:float" name="total" use="required"/>
+          <xs:attribute type="xs:float" name="subTotal" use="required"/>
+          <xs:attribute type="xs:string" name="metodoDePago" use="required"/>
+          <xs:attribute type="xs:short" name="numCtaPago"/>
+          <xs:attribute type="xs:string" name="tipoDeComprobante" use="required"/>
+          <xs:attribute type="xs:string" name="lugarExpedicion" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Emisor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="RegimenFiscal"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="nombre"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DomicilioFiscal">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:short" name="codigoPostal" use="required"/>
+          <xs:attribute type="xs:string" name="pais" use="required"/>
+          <xs:attribute type="xs:string" name="estado" use="required"/>
+          <xs:attribute type="xs:string" name="municipio" use="required"/>
+          <xs:attribute type="xs:string" name="calle" use="required"/>
+          <xs:attribute type="xs:string" name="noExterior"/>
+          <xs:attribute type="xs:string" name="noInterior"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Conceptos">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Concepto" maxOccurs="unbounded" minOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Impuestos">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Traslados"/>
+      </xs:sequence>
+      <xs:attribute type="xs:float" name="totalImpuestosTrasladados"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Addenda"/>
+  <xs:element name="Remision">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="InfoBasica"/>
+        <xs:element ref="InfoAdicional"/>
+        <xs:element ref="Emisor"/>
+        <xs:element ref="DomicilioFiscal"/>
+        <xs:element ref="Conceptos"/>
+        <xs:element ref="Impuestos"/>
+        <xs:element ref="Addenda"/>
+      </xs:sequence>
+      <xs:attribute type="xs:float" name="version" use="required"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
