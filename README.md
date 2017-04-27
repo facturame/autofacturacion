@@ -6,7 +6,7 @@
 
 - [Provisión de cuenta](#provision_cuenta)
 - [Formación de una remisión](#formacion_remision)
-- [Alta de una remisión](#alta_remision)
+- [Alta y bloqueo de una remisión](#alta_remision)
 - [Alta de un ticket](#alta_ticket)
 
 
@@ -65,7 +65,7 @@ El siguiente es un ejemplo de remisión para emisión de CFDI de tipo ingreso en
 
 
 
-## [Alta de una remisión](id:alta_remision)
+## [Alta y bloqueo de una remisión](id:alta_remision)
 
 Una vez construida la remisión, y luego de haber recibido un **web token** por parte del equio de **factúrame**, el alta de la remisión se realiza enviando una petición HTTPS con la remisión codificada en Base64 y algunos datos adicionales.
 
@@ -83,21 +83,21 @@ document            | Es la representación codificada en Base64 del archivo xml
 A continuación encontrarás ejemplos básicos de cómo realizar una petición de alta de remisión en diferentes lenguajes de programación.
 
 
-- [C#](examples/csharp/main.cs)
-- [Go](examples/go/main.go)
-- [Java](examples/java/main.java)
-- [Javascript](examples/javascript/main.js)
-- [Node.js](examples/node/main.js)
-- [PHP](examples/php/main.php)
-- [Python](examples/python/main.py)
-- [Ruby](examples/ruby/main.rb)
-- [Shell (curl)](examples/shell/main.sh)
+- [C#](examples/csharp/post.cs)
+- [Go](examples/go/post.go)
+- [Java](examples/java/post.java)
+- [Javascript](examples/javascript/post.js)
+- [Node.js](examples/node/post.js)
+- [PHP](examples/php/post.php)
+- [Python](examples/python/post.py)
+- [Ruby](examples/ruby/post.rb)
+- [Shell (curl)](examples/shell/post.sh)
 
 
 
 ### Códigos de respuesta
 
-La siguiente lista comprende todos los posibles códigos de respuesta del servicio de timbrado y sus posibles soluciones:
+La siguiente lista comprende todos los posibles códigos de respuesta del servicio de alta de un ticket y sus posibles soluciones:
 
 ###### Códigos 200
 
@@ -130,6 +130,54 @@ Ejemplo: el número de ticket es repetido.
     {
 	  "ticket_number": ["has already been taken"]
     }
+
+---
+
+Para determinados casos se provee también la posibilidad de **bloquear y desbloquear** la solicitud de facturación del receptor de un ticket ya emitido. Los parámetros requeridos para el consumo de este servicio son:
+
+- *Web token*, para la autenticación.
+- *ref_id* de una remisión válida. El bloqueo o desbloqueo se hará sobre el documento al que se haga referencia en este parámetro.
+
+A continuación encontrarás ejemplos básicos de cómo realizar una petición de alta de remisión en diferentes lenguajes de programación.
+
+### Ejemplos de código
+
+A continuación encontrarás ejemplos básicos de cómo realizar una petición para actualizar la disponibilidad de una remisión en diferentes lenguajes de programación.
+
+
+- [C#](examples/csharp/put.cs)
+- [Go](examples/go/put.go)
+- [Java](examples/java/put.java)
+- [Javascript](examples/javascript/put.js)
+- [Node.js](examples/node/put.js)
+- [PHP](examples/php/put.php)
+- [Python](examples/python/put.py)
+- [Ruby](examples/ruby/put.rb)
+- [Shell (curl)](examples/shell/put.sh)
+
+
+
+### Códigos de respuesta
+
+La siguiente lista comprende todos los posibles códigos de respuesta del servicio de alta de un ticket y sus posibles soluciones:
+
+###### Códigos 200
+
+**204** - Operación exitosa. La disponibilidad de la remisión fue actualizada con éxito.
+
+###### Códigos 400
+
+**401** - No fue posible autenticar la petición.
+
+**422** - La petición no pudo ser procesada exitosamente.
+
+Ejemplo: no se encontró la remisión.
+
+    {
+	    "message": "El recurso solicitado no existe."
+    }
+
+---    
 
 
 ## [Alta de un ticket](id:alta_ticket)
