@@ -12,10 +12,10 @@ La documentación archivada puede encontrarse a continuación.
 
 ## Índice
 
-- [Provisión de cuenta](#provision_cuenta)
-- [Formación de un documento](#formacion_documento)
-- [Alta y bloqueo de un documento](#alta_documento)
-- [Solicitud de facturación](#solicitud_facturacion)
+- [Provisión de cuenta](#provisi%C3%B3n-de-cuenta)
+- [Formación de un documento](#formaci%C3%B3n-de-un-documento)
+- [Alta y bloqueo de un documento](#alta-y-bloqueo-de-un-documento)
+- [Solicitud de facturación](#solicitud-de-facturaci%C3%B3n)
 
 
 ## [Provisión de cuenta](id:provision_cuenta)
