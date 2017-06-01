@@ -2,12 +2,20 @@
 
 > Ejemplo del funcionamiento de un portal de autofacturación en **factúrame**
 
+### Nota
+
+A partir del 1 de junio del 2017 este documento estará centrado en la versión de **CFDI 3.3**, dada a conocer por el Servicio de Administración Tributaria (SAT) y que será de uso general y obligatorio a partir del 1 de diciembre de 2017.
+
+La documentación archivada puede encontrarse a continuación.
+
+- [Autofacturación con *CFDI 3.2*.](guides/CFDI_32.md)
+
 ## Índice
 
 - [Provisión de cuenta](#provision_cuenta)
-- [Formación de una remisión](#formacion_remision)
-- [Alta y bloqueo de una remisión](#alta_remision)
-- [Alta de un ticket](#alta_ticket)
+- [Formación de un documento](#formacion_documento)
+- [Alta y bloqueo de un documento](#alta_documento)
+- [Solicitud de facturación](#solicitud_facturacion)
 
 
 ## [Provisión de cuenta](id:provision_cuenta)
@@ -24,90 +32,87 @@ Para usuarios de los siguientes proveedores, los datos pueden ser solicitados au
 - [Diverza](http://diverza.com)
 
 
-## [Formación de una remisión](id:formacion_remision)
+## [Formación de un documento](id:formacion_documento)
 
-Para la emisión de comprobantes fiscales es necesario que el emisor envíe la información mínima necesaria para generar el comprobante, para lo cual se utiliza un archivo XML de tipo **Remisión**.
+Para la emisión de comprobantes fiscales es necesario que el emisor envíe la información necesaria para generar el comprobante, para lo cual se utiliza un archivo XML de tipo **Comprobante**.
 
-La remisión incluye información propia de la emisión, como Emisor, Conceptos, Fecha de Emisión, etc. Se recomienda su uso para evitar la complejidad de construir, validar y firmar un CFDI directamente.
+**Factúrame**, a través de los servicios de un proveedor de facturación, se encargará de generar el CFDI con el sello correspondiente y la certificación del timbre cuando sea requerido.
 
-**Factúrame**, a través de los servicios de un proveedor de facturación, se encargará de generar el CFDI con el sello correspondiente y la certificación del timbre.
-
-El siguiente es un ejemplo de remisión para emisión de CFDI de tipo ingreso en el que se destaca la ausencia de información sobre el Receptor, esta información será completada una vez que el consumidor decida solicitar la factura a partir de la información del ticket.
+El siguiente es un ejemplo de comprobante para emisión de CFDI de tipo ingreso.
 
 ```
-<?xml version="1.0" encoding="UTF-8"?>
-<Remision xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="5.2">
-  <InfoBasica rfcEmisor="AAA010101AAA" serie="FA" folio="12345">
-   </InfoBasica>
-  <InfoAdicional formaDePago="Pago en una sola exhibicion" total="15959.28" subTotal="13758.20" metodoDePago="02" numCtaPago="1234" tipoDeComprobante="ingreso" lugarExpedicion="123 Cacao Street , Santa Fe, Distrito Federal"/>
-  <Emisor nombre="Emisor Demo">
-    <RegimenFiscal Regimen="Regimen General de Ley Personas Morales"/>
-  </Emisor>
-  <DomicilioFiscal codigoPostal="01210" pais="Mexico" estado="Distrito Federal" municipio="Alvaro Obregón" calle="Prolongación Paseo de la Reforma" noExterior="No. 600" noInterior="Piso 1 local 132"/>
-  <Conceptos>
-    <Concepto importe="1000.00" valorUnitario="11759.20" descripcion="iPhone 8 Plus" noIdentificacion="12345657" unidad="Pieza" cantidad="1.000">
-    </Concepto>
-    <Concepto importe="2999.00" valorUnitario="1999.00" descripcion="Mantenimiento" noIdentificacion="7654321" unidad="Servicio" cantidad="1.000">
-       </Concepto>
-  </Conceptos>
-  <Impuestos totalImpuestosTrasladados="2201.31">
-    <Traslados>
-      <Traslado importe="2201.31" tasa="16.00" impuesto="IVA"/>
-    </Traslados>
-  </Impuestos>
-</Remision>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<cfdi:Comprobante xmlns:tdCFDI="http://www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI" xmlns:cfdi="http://www.sat.gob.mx/cfd/3" xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital" LugarExpedicion="06300" Moneda="MXN" Certificado="MIIEYTCCA0mgAwIBAgIUMjAwMDEwMDAwMDAyMDAwMDE0MjgwDQYJKoZIhvcNAQEFBQAwggFcMRowGAYDVQQDDBFBLkMuIDIgZGUgcHJ1ZWJhczEvMC0GA1UECgwmU2VydmljaW8gZGUgQWRtaW5pc3RyYWNpw7NuIFRyaWJ1dGFyaWExODA2BgNVBAsML0FkbWluaXN0cmFjacOzbiBkZSBTZWd1cmlkYWQgZGUgbGEgSW5mb3JtYWNpw7NuMSkwJwYJKoZIhvcNAQkBFhphc2lzbmV0QHBydWViYXMuc2F0LmdvYi5teDEmMCQGA1UECQwdQXYuIEhpZGFsZ28gNzcsIENvbC4gR3VlcnJlcm8xDjAMBgNVBBEMBTA2MzAwMQswCQYDVQQGEwJNWDEZMBcGA1UECAwQRGlzdHJpdG8gRmVkZXJhbDESMBAGA1UEBwwJQ295b2Fjw6FuMTQwMgYJKoZIhvcNAQkCDCVSZXNwb25zYWJsZTogQXJhY2VsaSBHYW5kYXJhIEJhdXRpc3RhMB4XDTEzMDUwNzE2MDEyOVoXDTE3MDUwNzE2MDEyOVowgdsxKTAnBgNVBAMTIEFDQ0VNIFNFUlZJQ0lPUyBFTVBSRVNBUklBTEVTIFNDMSkwJwYDVQQpEyBBQ0NFTSBTRVJWSUNJT1MgRU1QUkVTQVJJQUxFUyBTQzEpMCcGA1UEChMgQUNDRU0gU0VSVklDSU9TIEVNUFJFU0FSSUFMRVMgU0MxJTAjBgNVBC0THEFBQTAxMDEwMUFBQSAvIEhFR1Q3NjEwMDM0UzIxHjAcBgNVBAUTFSAvIEhFR1Q3NjEwMDNNREZOU1IwODERMA8GA1UECxMIcHJvZHVjdG8wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAKS/beUVy6E3aODaNuLd2S3PXaQre0tGxmYTeUxa55x2t/7919ttgOpKF6hPF5KvlYh4ztqQqP4yEV+HjH7yy/2d/+e7t+J61jTrbdLqT3WD0+s5fCL6JOrF4hqy//EGdfvYftdGRNrZH+dAjWWml2S/hrN9aUxraS5qqO1b7btlAgMBAAGjHTAbMAwGA1UdEwEB/wQCMAAwCwYDVR0PBAQDAgbAMA0GCSqGSIb3DQEBBQUAA4IBAQACPXAWZX2DuKiZVv35RS1WFKgT2ubUO9C+byfZapV6ZzYNOiA4KmpkqHU/bkZHqKjR+R59hoYhVdn+ClUIliZf2ChHh8s0a0vBRNJ3IHfA1akWdzocYZLXjz3m0Er31BY+uS3qWUtPsONGVDyZL6IUBBUlFoecQhP9AO39er8zIbeU2b0MMBJxCt4vbDKFvT9i3V0Puoo+kmmkf15D2rBGR+drd8H8Yg8TDGFKf2zKmRsgT7nIeou6WpfYp570WIvLJQY+fsMp334D05Up5ykYSAxUGa30RdUzA4rxN5hT+W9whWVGD88TD33Nw55uNRUcRO3ZUVHmdWRG+GjhlfsD" Descuento="0.00" Fecha="2017-05-02T10:15:49" Folio="4119" FormaPago="01" MetodoPago="PUE" NoCertificado="20001000000200001428" Sello="hWbt59G2G3MIQTGItjrzWiegOCfBM7i2D12wJvkIWeX6tBH2Ft7D1AhqrgBuDRZ1Y9nHtDycS9bjM+rxWXUXJR3BTj3QNez/4UPUDiObHwSYjyhfeOyjoncMREYKEKuSZnsqwxbCpkzMz6XWb8D1iZPQEi7YYQ4lfmESQSSoHPg=" Serie="B" SubTotal="616.37" TipoDeComprobante="I" Total="715.00" Version="3.3">
+    <cfdi:Emisor Nombre="Empresa TEST Emisor SA de CV" Rfc="AAA010101AAA" RegimenFiscal="601"/>
+    <cfdi:Receptor Nombre="Empresa TEST Receptor SA de CV" Rfc="XAXX010101000" UsoCFDI="G03"/>
+    <cfdi:Conceptos>
+        <cfdi:Concepto ClaveProdServ="01010101" Cantidad="1" Descripcion="Articulo Test 001" Importe="616.37" ClaveUnidad="E48" Unidad="Servicio" ValorUnitario="616.37">
+            <cfdi:Impuestos>
+                <cfdi:Traslados>
+                    <cfdi:Traslado Base="616.37" TipoFactor="Tasa" TasaOCuota="0.160000" Impuesto="002" Importe="98.62"/>
+                </cfdi:Traslados>
+            </cfdi:Impuestos>
+        <cfdi:Parte ClaveProdServ="01010101" NoIdentificacion="COD05" Cantidad="1.00" Unidad="Pieza" Descripcion="Parte 1" ValorUnitario="100.00" Importe="100.00">
+        <cfdi:InformacionAduanera NumeroPedimento="17  01  3173  7123456"/>
+      </cfdi:Parte>
+        </cfdi:Concepto>
+    </cfdi:Conceptos>
+    <cfdi:Impuestos TotalImpuestosTrasladados="98.62">
+        <cfdi:Traslados>
+            <cfdi:Traslado Importe="98.62" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000"/>
+        </cfdi:Traslados>
+    </cfdi:Impuestos>
+</cfdi:Comprobante>
 ```
 
 ---
 
-[Descarga el esquema XSD](assets/xsd/remision_52.xsd) que puedes usar para validar la estructura del XML.
+[Descarga el esquema XSD](http://www.sat.gob.mx/informacion_fiscal/factura_electronica/Paginas/Anexo_20_version3.3.aspx) que puedes usar para validar la estructura del XML.
 
 
 
-## [Alta y bloqueo de una remisión](id:alta_remision)
+## [Alta y bloqueo de un documento](id:alta_documento)
 
-Una vez construida la remisión, y luego de haber recibido un **web token** por parte del equio de **factúrame**, el alta de la remisión se realiza enviando una petición HTTPS con la remisión codificada en Base64 y algunos datos adicionales.
+Una vez construido el documento, y luego de haber recibido un **web token** por parte del equio de **factúrame**, el alta del documento se realiza enviando una petición HTTPS con el archivo codificado en Base64 y posteriormente como valor en un objeto JSON.
 
 A continuación se describen los parámetros requeridos en la petición.
 
 Parámetro           | Descripción
 :------------------ | :-----------
-ref_id              | Para control interno del contribuyente, acepta un valor alfanumérico. Debe ser único. Se recomienda el uso de una función de UUID.
-ticket_number       | Expresa el número de ticket con el cual el usuario receptor de la factura se referirá a la transacción, incluyendo la búsqueda y el procesamiento del ticket.
-certificate_number  | Sobreescribe el valor proporcionado en la provisión de la cuenta en caso de necesitarlo. 
-document            | Es la representación codificada en Base64 del archivo xml de tipo **Remisión**
+ref_id              | Para control interno del contribuyente. Acepta un valor alfanumérico. Debe ser único. Se recomienda el uso de una función de UUID.
+document            | Es la representación codificada en Base64 del archivo xml de tipo **Comprobante**
 
 ### Ejemplos de código
 
-A continuación encontrarás ejemplos básicos de cómo realizar una petición de alta de remisión en diferentes lenguajes de programación.
+A continuación encontrarás ejemplos básicos de cómo realizar una petición de alta en diferentes lenguajes de programación.
 
 
-- [C#](examples/csharp/post.cs)
-- [Go](examples/go/post.go)
-- [Java](examples/java/post.java)
-- [Javascript](examples/javascript/post.js)
-- [Node.js](examples/node/post.js)
-- [PHP](examples/php/post.php)
-- [Python](examples/python/post.py)
-- [Ruby](examples/ruby/post.rb)
-- [Shell (curl)](examples/shell/post.sh)
+- [C#](examples/v33/csharp/post.cs)
+- [Go](examples/v33/go/post.go)
+- [Java](examples/v33/java/post.java)
+- [Javascript](examples/v33/javascript/post.js)
+- [Node.js](examples/v33/node/post.js)
+- [PHP](examples/v33/php/post.php)
+- [Python](examples/v33/python/post.py)
+- [Ruby](examples/v33/ruby/post.rb)
+- [Shell (curl)](examples/v33/shell/post.sh)
 
 
 
 ### Códigos de respuesta
 
-La siguiente lista comprende todos los posibles códigos de respuesta del servicio de alta de un ticket y sus posibles soluciones:
+La siguiente lista comprende todos los posibles códigos de respuesta del servicio de alta y sus posibles soluciones:
 
 ###### Códigos 200
 
-**201** - Operación exitosa. La remisión fue creada con éxito.
+**201** - Operación exitosa. El documento fue creado con éxito.
 
     {
-      "ref_id":"007654KL32F8427129GRC3",
-      "ticket_number":"99334194842183873900127",
-      "created_at":"2017-04-03T18:20:13.240Z",
-      "updated_at":"2017-04-03T18:20:13.240Z"
+      "ref_id":"57b6e71b-0ccf-46a3-88ab-9fcd799164c1",
+      "ticket_number":"mRrrMjrsIQA0GtAft04vpQ",
+      "processed":false,
+      "is_available":true,
+      "created_at":"2017-06-01T21:12:12.619Z"
     }
 
 
@@ -125,41 +130,40 @@ Ejemplo: el documento no es válido.
 
 ---    
 
-Ejemplo: el número de ticket es repetido.
+Ejemplo: el RFC del documento no corresponde a la autenticación.
 
     {
-	  "ticket_number": ["has already been taken"]
+	    "document": ["attribute Rfc on Emisor node does not match"]
     }
 
 ---
 
-Para determinados casos se provee también la posibilidad de **bloquear y desbloquear** la solicitud de facturación del receptor de un ticket ya emitido. Los parámetros requeridos para el consumo de este servicio son:
+Para determinados casos se provee también la posibilidad de **bloquear y desbloquear** la solicitud de facturación del receptor de un documento ya emitido. Los parámetros requeridos para el consumo de este servicio son:
 
-- *Web token*, para la autenticación.
-- *ref_id* de una remisión válida. El bloqueo o desbloqueo se hará sobre el documento al que se haga referencia en este parámetro.
-
-A continuación encontrarás ejemplos básicos de cómo realizar una petición de alta de remisión en diferentes lenguajes de programación.
+- *Web token*, para la autenticación de la petición.
+- El *ticket_number* que fue generado a partir de un documento. El bloqueo o desbloqueo se hará sobre el documento al que se haga referencia en este parámetro.
+- *is_available*, un valor de tipo booleano que indica si el documento puede estar o no disponible para su facturación.
 
 ### Ejemplos de código
 
-A continuación encontrarás ejemplos básicos de cómo realizar una petición para actualizar la disponibilidad de una remisión en diferentes lenguajes de programación.
+A continuación encontrarás ejemplos básicos de cómo realizar una petición para actualizar la disponibilidad de un documento en diferentes lenguajes de programación.
 
 
-- [C#](examples/csharp/put.cs)
-- [Go](examples/go/put.go)
-- [Java](examples/java/put.java)
-- [Javascript](examples/javascript/put.js)
-- [Node.js](examples/node/put.js)
-- [PHP](examples/php/put.php)
-- [Python](examples/python/put.py)
-- [Ruby](examples/ruby/put.rb)
-- [Shell (curl)](examples/shell/put.sh)
+- [C#](examples/v33/csharp/put.cs)
+- [Go](examples/v33/go/put.go)
+- [Java](examples/v33/java/put.java)
+- [Javascript](examples/v33/javascript/put.js)
+- [Node.js](examples/v33/node/put.js)
+- [PHP](examples/v33/php/put.php)
+- [Python](examples/v33/python/put.py)
+- [Ruby](examples/v33/ruby/put.rb)
+- [Shell (curl)](examples/v33/shell/put.sh)
 
 
 
 ### Códigos de respuesta
 
-La siguiente lista comprende todos los posibles códigos de respuesta del servicio de alta de un ticket y sus posibles soluciones:
+La siguiente lista comprende todos los posibles códigos de respuesta del servicio de bloqueo y sus posibles soluciones:
 
 ###### Códigos 200
 
@@ -171,24 +175,22 @@ La siguiente lista comprende todos los posibles códigos de respuesta del servic
 
 **422** - La petición no pudo ser procesada exitosamente.
 
-Ejemplo: no se encontró la remisión.
+Ejemplo: no se encontró el documento.
 
     {
-	    "message": "El recurso solicitado no existe."
+	    "message": "The resource cannot be found"
     }
 
 ---    
 
 
-## [Alta de un ticket](id:alta_ticket)
+## [Solicitud de facturación](id:solicitud_facturacion)
 
-Una vez registrada la remisión, el usuario receptor podrá solicitar la facturación de su ticket a partir del número de ticket que le haya sido entregado en el momento de la venta.
+Una vez registrada la venta, el receptor podrá solicitar la facturación de su ticket a partir del número de ticket que le haya sido entregado.
 
-Este paso requiere solamente de la captura por parte del usuario receptor de los datos propios de un ticket, como el número de ticket, fecha, monto, sucursal, etc.
+Este paso requiere solamente la captura por parte del receptor del folio único de ticket.
 
 A continuación se muestra una representación de esta acción.
-
-![Ayuda](assets/images/alta0.png "Ayuda")
 
 ![Formulario](assets/images/alta1.png "Formulario")
 
