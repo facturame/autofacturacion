@@ -80,6 +80,7 @@ A continuación se describen los parámetros requeridos en la petición.
 Parámetro           | Descripción
 :------------------ | :-----------
 ref_id              | Para control interno del contribuyente. Acepta un valor alfanumérico. Debe ser único. Se recomienda el uso de una función de UUID.
+ticket_number       | Expresa el número de ticket con el cual el usuario receptor de la factura se referirá a la transacción, incluyendo la búsqueda y el procesamiento del ticket.
 document            | Es la representación codificada en Base64 del archivo xml de tipo **Comprobante**
 
 ### Ejemplos de código
