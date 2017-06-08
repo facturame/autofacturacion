@@ -73,10 +73,11 @@ A continuación se describen los parámetros requeridos en la petición.
 
 Parámetro           | Descripción
 :------------------ | :-----------
-ref_id              | Para control interno del contribuyente, acepta un valor alfanumérico. Debe ser único. Se recomienda el uso de una función de UUID.
-ticket_number       | Expresa el número de ticket con el cual el usuario receptor de la factura se referirá a la transacción, incluyendo la búsqueda y el procesamiento del ticket.
-certificate_number  | Sobreescribe el valor proporcionado en la provisión de la cuenta en caso de necesitarlo. 
-document            | Es la representación codificada en Base64 del archivo xml de tipo **Remisión**
+ref_id              | Requerido. Para control interno del contribuyente, acepta un valor alfanumérico. Debe ser único. Se recomienda el uso de una función de UUID.
+ticket_number       | Requerido. Expresa el número de ticket con el cual el usuario receptor de la factura se referirá a la transacción, incluyendo la búsqueda y el procesamiento del ticket.
+certificate_number  | Requerido. Sobreescribe el valor proporcionado en la provisión de la cuenta en caso de necesitarlo. 
+branch_id           | Opcional. Expresa la sucursal, en caso de haberla, desde la que se emite el comprobante.
+document            | Requerido. Es la representación codificada en Base64 del archivo xml de tipo **Remisión**
 
 ### Ejemplos de código
 
