@@ -81,6 +81,7 @@ Parámetro           | Descripción
 :------------------ | :-----------
 ref_id              | Requerido. Para control interno del contribuyente. Acepta un valor alfanumérico. Debe ser único. Se recomienda el uso de una función de UUID.
 ticket_number       | Requerido. Expresa el número de ticket con el cual el usuario receptor de la factura se referirá a la transacción, incluyendo la búsqueda y el procesamiento del ticket.
+direct_emission     | Requerido. Booleano para indicar si la emisión debe hacerse al instante en lugar de ser pospuesta a su futura solicitud por parte del receptor. Cuando se utilice esta opción los datos del receptor deben ser los definitivos.
 branch_id           | Opcional. Expresa la sucursal, en caso de haberla, desde la que se emite el comprobante.
 document            | Requerido. Es la representación codificada en Base64 del archivo xml de tipo **Comprobante**
 
@@ -110,13 +111,14 @@ La siguiente lista comprende todos los posibles códigos de respuesta del servic
 **201** - Operación exitosa. El documento fue creado con éxito.
 
     {
-      "ref_id":"57b6e71b-0ccf-46a3-88ab-9fcd799164c1",
-      "ticket_number":"mRrrMjrsIQA0GtAft04vpQ",
-      "processed":false,
-      "is_available":true,
-      "created_at":"2017-06-01T21:12:12.619Z"
+        "ref_id":"123abc",
+        "ticket_number":"QFAuxk5l6CWQ/xZyuFN2",
+        "processed":false,
+        "is_available":true,
+        "created_at":"2017-06-01T18:44:29.737Z"
     }
 
+En el caso de que el parámetro *direct_emission* se utiice con el valor *verdadero (**true**)*, la respuesta incluirá el *uuid* correspondiente al cfdi emitido.
 
 ###### Códigos 400
 
