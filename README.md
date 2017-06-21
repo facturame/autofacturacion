@@ -118,7 +118,7 @@ La siguiente lista comprende todos los posibles códigos de respuesta del servic
         "created_at":"2017-06-01T18:44:29.737Z"
     }
 
-En el caso de que el parámetro *direct_emission* se utiice con el valor *verdadero (**true**)*, la respuesta incluirá el *uuid* correspondiente al cfdi emitido.
+En el caso de que el parámetro *direct_emission* se utiice con el valor *verdadero (**true**)*, la respuesta incluirá además los campos *uuid*, *stamp_chain* y *qr_code* correspondientes al cfdi emitido.
 
 ###### Códigos 400
 
