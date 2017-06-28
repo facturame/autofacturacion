@@ -84,6 +84,8 @@ ticket_number       | Requerido. Expresa el número de ticket con el cual el usu
 direct_emission     | Requerido. Booleano para indicar si la emisión debe hacerse al instante en lugar de ser pospuesta a su futura solicitud por parte del receptor. Cuando se utilice esta opción los datos del receptor deben ser los definitivos.
 branch_id           | Opcional. Expresa la sucursal, en caso de haberla, desde la que se emite el comprobante.
 document            | Requerido. Es la representación codificada en Base64 del archivo xml de tipo **Comprobante**
+generate_folio      | Opcional. Cadena que expresa la estrategia a seguir para asignar una serie y un folio al comprobante en emisión. Los valores posibles son: "**from_document**" y "**empty**". En el primer caso, el servicio tomará el valor de la serie que tenga el xml y con ese dato generará el consecutivo del folio. En el segundo caso, el servicio tomará el valor de la serie "NULL" que tenga el xml y con ese dato generará el consecutivo del folio. Si no se utiliza este parámetro, se asume que los datos de serie y folio que aparezcan en el xml son los que deben usarse.
+
 
 ### Ejemplos de código
 
@@ -118,7 +120,19 @@ La siguiente lista comprende todos los posibles códigos de respuesta del servic
         "created_at":"2017-06-01T18:44:29.737Z"
     }
 
-En el caso de que el parámetro *direct_emission* se utiice con el valor *verdadero (**true**)*, la respuesta incluirá además los campos *uuid*, *stamp_chain* y *qr_code* correspondientes al cfdi emitido.
+En el caso de que el parámetro *direct_emission* se utiice con el valor *verdadero (**true**)*, la respuesta incluirá además los campos *uuid*, *stamp_chain*, *qr_code* y *cfdi* correspondientes al cfdi emitido. *qr_code* y *cfdi* estarán codificados en Base64.
+
+    {
+        "ref_id":"123abc",
+        "ticket_number":"QFAuxk5l6CWQ/xZyuFN2",
+        "processed":false,
+        "is_available":true,
+        "created_at":"2017-06-01T18:44:29.737Z",
+        "uuid":"3bf4707e-2afb-4bd2-bf1f-dd6ff0f7f35d",
+        "stamp_chain":"||1.1|3bf4707e-2afb-4bd2-bf1f-dd6ff0f7f35d|2017-06-01T14:44:13|DIA031002LZ2|Gh5COoX1m6oxSLGR960uqYZi+EO6tHBa36tMAMGVdM3yhW82t5hBTQCso9Nxw/DN7+pPL7VMUdRaoaI1JjYFWAfg6hTpcbxhahMBtJmrw4TP+Gx6lXdvvgMwXPOZGrEklXfIukXzipuikosOxVt8z5zv8FAzn1naV71PkRKt4Mg=|20001000000300022323||",
+        "qr_code":"BASE64_ENCODED_QR_CODE",
+        "cfdi":"BASE64_ENCODED_CFDI"
+    }
 
 ###### Códigos 400
 
