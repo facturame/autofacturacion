@@ -15,6 +15,7 @@ La documentación archivada puede encontrarse a continuación.
 - [Provisión de cuenta](#provisi%C3%B3n-de-cuenta)
 - [Formación de un documento](#formaci%C3%B3n-de-un-documento)
 - [Alta y bloqueo de un documento](#alta-y-bloqueo-de-un-documento)
+- [Devoluciones](#devoluciones)
 - [Solicitud de facturación](#solicitud-de-facturaci%C3%B3n)
 
 
@@ -26,6 +27,7 @@ Para completar con éxito la provisión de la cuenta son requeridos los siguient
 - ID y Token de su proveedor de facturación
 - Número de certificado
 - Nombre de plantilla para generar PDF
+- Régimen Fiscal
 
 Para usuarios de los siguientes proveedores, los datos pueden ser solicitados automáticamente por Factúrame:
 
@@ -67,8 +69,7 @@ El siguiente es un ejemplo de comprobante para emisión de CFDI de tipo ingreso.
 
 ---
 
-[Descarga el esquema XSD](http://www.sat.gob.mx/informacion_fiscal/factura_electronica/Paginas/Anexo_20_version3.3.aspx) que puedes usar para validar la estructura del XML.
-
+[Descarga el esquema XSD versión 3.3](assets/xsd/v33/cfdi_33.xsd) que puedes usar para validar la estructura del XML, junto a los [catálogos](assets/xsd/v33/catCFDI.xsd) y [tipos de dato](assets/xsd/v33/tdCFDI.xsd).
 
 
 ## [Alta y bloqueo de un documento](id:alta_documento)
@@ -77,15 +78,15 @@ Una vez construido el documento, y luego de haber recibido un **web token** por 
 
 A continuación se describen los parámetros requeridos en la petición.
 
-Parámetro           | Descripción
-:------------------ | :-----------
-ref_id              | Requerido. Para control interno del contribuyente. Acepta un valor alfanumérico. Debe ser único. Se recomienda el uso de una función de UUID.
-ticket_number       | Requerido. Expresa el número de ticket con el cual el usuario receptor de la factura se referirá a la transacción, incluyendo la búsqueda y el procesamiento del ticket.
-direct_emission     | Requerido. Booleano para indicar si la emisión debe hacerse al instante en lugar de ser pospuesta a su futura solicitud por parte del receptor. Cuando se utilice esta opción los datos del receptor deben ser los definitivos.
-customer_email      | Opcional. Una lista de 1 ó más direcciones de correo a las cuales se les hará llegar la representación en XML y PDF del comprobante emitido, siempre y cuando se trate de emisión directa (*direct_emission: true*). Ejemplo: ["cliente@example.com"]
-branch_id           | Opcional. Expresa la sucursal, en caso de haberla, desde la que se emite el comprobante.
-document            | Requerido. Es la representación codificada en Base64 del archivo xml de tipo **Comprobante**
-generate_folio      | Opcional. Cadena que expresa la estrategia a seguir para asignar una serie y un folio al comprobante en emisión. Los valores posibles son: "**from_document**" y "**empty**". En el primer caso, el servicio tomará el valor de la serie que tenga el xml y con ese dato generará el consecutivo del folio. En el segundo caso, el servicio tomará el valor de la serie "NULL" que tenga el xml y con ese dato generará el consecutivo del folio. Si no se utiliza este parámetro, se asume que los datos de serie y folio que aparezcan en el xml son los que deben usarse.
+Parámetro           | Tipo         | Descripción
+:------------------ | :----------: | :-----------
+ref_id              | String       | Requerido. Para control interno del contribuyente. Acepta un valor alfanumérico. Debe ser único. Se recomienda el uso de una función de UUID.
+ticket_number       | String       | Requerido. Expresa el número de ticket con el cual el usuario receptor de la factura se referirá a la transacción, incluyendo la búsqueda y el procesamiento del ticket.
+direct_emission     | Boolean      | Requerido. Indicar si la emisión debe hacerse al instante en lugar de ser pospuesta a su futura solicitud por parte del receptor. Cuando se utilice esta opción los datos del receptor deben ser los definitivos.
+customer_email      | Array        | Opcional. Una lista de 1 ó más direcciones de correo a las cuales se les hará llegar la representación en XML y PDF del comprobante emitido, siempre y cuando se trate de emisión directa (*direct_emission: true*). Ejemplo: ["cliente@example.com"]
+branch_id           | String       | Opcional. Expresa la sucursal, en caso de haberla, desde la que se emite el comprobante. Para el uso de este parámetro debe configurarse un catálogo de sucursales y series.
+document            | String       | Requerido. Es la representación codificada en Base64 del archivo xml de tipo **Comprobante**
+generate_folio      | String       | Opcional. Cadena que expresa la estrategia a seguir para asignar una serie y un folio al comprobante en emisión. Los valores posibles son: "**from_document**" y "**empty**". En el primer caso, el servicio tomará el valor de la serie que tenga el xml y con ese dato generará el consecutivo del folio. En el segundo caso, el servicio tomará el valor de la serie "NULL" que tenga el xml y con ese dato generará el consecutivo del folio. Si no se utiliza este parámetro, se asume que los datos de serie y folio que aparezcan en el xml son los que deben usarse.
 
 
 ### Ejemplos de código
@@ -201,6 +202,20 @@ Ejemplo: no se encontró el documento.
     }
 
 ---    
+
+
+## [Devoluciones](id:devoluciones)
+
+Para los casos en que deba efectuarse una devolución o cancelación, existe la posibilidad de generar un **comprobante de nota de ingreso**. Para esto deberá generarse un comprobante por los conceptos correspondientes y darlo de alta enviando una petición HTTPS con el archivo codificado en Base64 y posteriormente como valor en un objeto JSON.
+
+A continuación se describen los parámetros requeridos en la petición.
+
+Parámetro             | Tipo         | Descripción
+:-------------------- | :----------: | :-----------
+related_ticket_number | String       | Requerido. Expresa el número de ticket con el cual el usuario receptor de la factura se referirá a la transacción, incluyendo la búsqueda y el procesamiento del ticket. Cuando se emita el comprobante original se emitirá también esta nota de crédito.
+document              | String       | Requerido. Es la representación codificada en Base64 del archivo xml de tipo **Comprobante**. En este servicio el comprobante es de tipo **Egreso**.
+generate_folio        | String       | Opcional. Cadena que expresa la estrategia a seguir para asignar una serie y un folio al comprobante en emisión. Los valores posibles son: "**from_document**" y "**empty**". En el primer caso, el servicio tomará el valor de la serie que tenga el xml y con ese dato generará el consecutivo del folio. En el segundo caso, el servicio tomará el valor de la serie "NULL" que tenga el xml y con ese dato generará el consecutivo del folio. Si no se utiliza este parámetro, se asume que los datos de serie y folio que aparezcan en el xml son los que deben usarse.
+
 
 
 ## [Solicitud de facturación](id:solicitud_facturacion)
