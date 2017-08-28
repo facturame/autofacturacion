@@ -214,6 +214,7 @@ Parámetro             | Tipo         | Descripción
 :-------------------- | :----------: | :-----------
 related_ticket_number | String       | Requerido. Expresa el número de ticket con el cual el usuario receptor de la factura se referirá a la transacción, incluyendo la búsqueda y el procesamiento del ticket. Cuando se emita el comprobante original se emitirá también esta nota de crédito.
 document              | String       | Requerido. Es la representación codificada en Base64 del archivo xml de tipo **Comprobante**. En este servicio el comprobante es de tipo **Egreso**.
+ref_id                | String       | Requerido. Para control interno del contribuyente y para garantizar la unicidad de la transacción. Acepta un valor alfanumérico que debe ser único.
 generate_folio        | String       | Opcional. Cadena que expresa la estrategia a seguir para asignar una serie y un folio al comprobante en emisión. Los valores posibles son: "**from_document**" y "**empty**". En el primer caso, el servicio tomará el valor de la serie que tenga el xml y con ese dato generará el consecutivo del folio. En el segundo caso, el servicio tomará el valor de la serie "NULL" que tenga el xml y con ese dato generará el consecutivo del folio. Si no se utiliza este parámetro, se asume que los datos de serie y folio que aparezcan en el xml son los que deben usarse.
 
 
