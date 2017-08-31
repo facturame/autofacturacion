@@ -15,6 +15,7 @@ La documentación archivada puede encontrarse a continuación.
 - [Provisión de cuenta](#provisi%C3%B3n-de-cuenta)
 - [Formación de un documento](#formaci%C3%B3n-de-un-documento)
 - [Alta y bloqueo de un documento](#alta-y-bloqueo-de-un-documento)
+- [Alta masiva](#alta-masiva)
 - [Devoluciones](#devoluciones)
 - [Solicitud de facturación](#solicitud-de-facturaci%C3%B3n)
 
@@ -203,6 +204,12 @@ Ejemplo: no se encontró el documento.
 
 ---    
 
+
+## [Alta masiva](id:alta-masiva)
+
+En ocasiones, dar de alta un documento a la vez podría no ser lo más conveniente. Después de todo, no es lo mismo preparar una cafetera grande para 8 personas que poner una cafetera individual 8 veces.
+
+Para esos casos, un alta masiva de tickets puede ser la alternativa. [Aprende más a continuación.](guides/batch_processing_v33.md)
 
 ## [Devoluciones](id:devoluciones)
 
